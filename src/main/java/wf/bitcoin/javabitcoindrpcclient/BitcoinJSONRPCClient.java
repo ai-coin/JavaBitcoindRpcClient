@@ -1,15 +1,15 @@
 /*
  * BitcoindRpcClient-JSON-RPC-Client License
- * 
+ *
  * Copyright (c) 2013, Mikhail Yevchenko.
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the
  * Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
  * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
@@ -52,6 +52,8 @@ import static wf.bitcoin.javabitcoindrpcclient.MapWrapper.*;
  *
  * @author Mikhail Yevchenko m.ṥῥẚɱ.ѓѐḿởύḙ at azazar.com
  * Small modifications by Alessandro Polverini polverini at gmail.com
+ *
+ * Modified for A.I. Coin by Stephen L. Reed.
  */
 public class BitcoinJSONRPCClient implements BitcoindRpcClient {
 
@@ -89,14 +91,14 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
       File f;
       File home = new File(System.getProperty("user.home"));
 
-      if ((f = new File(home, ".bitcoin" + File.separatorChar + "bitcoin.conf")).exists()) {
-      } else if ((f = new File(home, "AppData" + File.separatorChar + "Roaming" + File.separatorChar + "Bitcoin" + File.separatorChar + "bitcoin.conf")).exists()) {
+      // Linux
+      if ((f = new File(home, ".aicoin" + File.separatorChar + "aicoin.conf")).exists()) {
       } else {
         f = null;
       }
 
       if (f != null) {
-        logger.fine("Bitcoin configuration file found");
+        logger.fine("AICoin configuration file found");
 
         Properties p = new Properties();
         try (FileInputStream i = new FileInputStream(f)) {
@@ -178,7 +180,7 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
   public Object loadResponse(InputStream in, Object expectedID, boolean close) throws IOException, BitcoinRpcException {
     try {
       String r = new String(loadStream(in, close), QUERY_CHARSET);
-      logger.log(Level.FINE, "Bitcoin JSON-RPC response:\n{0}", r);
+      logger.log(Level.FINE, "AICoin JSON-RPC response:\n{0}", r);
       try {
         Map response = (Map) JSON.parse(r);
 
@@ -216,7 +218,7 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
 //            conn.connect();
       ((HttpURLConnection) conn).setRequestProperty("Authorization", "Basic " + authStr);
       byte[] r = prepareRequest(method, o);
-      logger.log(Level.FINE, "Bitcoin JSON-RPC request:\n{0}", new String(r, QUERY_CHARSET));
+      logger.log(Level.FINE, "AICoin JSON-RPC request:\n{0}", new String(r, QUERY_CHARSET));
       conn.getOutputStream().write(r);
       conn.getOutputStream().close();
       int responseCode = conn.getResponseCode();
@@ -1096,21 +1098,21 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
 //        BitcoinJSONRPCClient b = new BitcoinJSONRPCClient(true);
 //
 //        System.out.println(b.listTransactions());
-//        
+//
 ////        String aa = "mjrxsupqJGBzeMjEiv57qxSKxgd3SVwZYd";
 ////        String ab = "mpN3WTJYsrnnWeoMzwTxkp8325nzArxnxN";
 ////        String ac = b.getNewAddress("TEST");
-////        
+////
 ////        System.out.println(b.getBalance("", 0));
 ////        System.out.println(b.sendFrom("", ab, 0.1));
 ////        System.out.println(b.sendToAddress(ab, 0.1, "comment", "tocomment"));
 ////        System.out.println(b.getReceivedByAddress(ab));
 ////        System.out.println(b.sendToAddress(ac, 0.01));
-////        
+////
 ////        System.out.println(b.validateAddress(ac));
-////        
+////
 //////        b.importPrivKey(b.dumpPrivKey(aa));
-////        
+////
 ////        System.out.println(b.getAddressesByAccount("TEST"));
 ////        System.out.println(b.listReceivedByAddress());
 //    }

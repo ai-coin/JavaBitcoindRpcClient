@@ -84,7 +84,7 @@ public class BitcoinRawTxBuilder {
         break;
     }
     if (v > 0)
-      throw new BitcoinRpcException("Not enough bitcoins (" + v + "/" + value + ")");
+      throw new BitcoinRpcException("Not enough aicoins (" + v + "/" + value + ")");
     return this;
   }
 
