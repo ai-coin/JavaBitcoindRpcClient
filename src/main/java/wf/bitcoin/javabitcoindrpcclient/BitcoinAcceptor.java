@@ -1,15 +1,15 @@
 /*
  * BitcoindRpcClient-JSON-RPC-Client License
- * 
+ *
  * Copyright (c) 2013, Mikhail Yevchenko.
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the
  * Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
  * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
@@ -21,12 +21,11 @@ package wf.bitcoin.javabitcoindrpcclient;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 public class BitcoinAcceptor implements Runnable {
-    
-    private static final Logger logger = Logger.getLogger(BitcoinAcceptor.class.getCanonicalName());
+
+    private static final Logger LOGGER = Logger.getLogger(BitcoinAcceptor.class);
 
     public final BitcoindRpcClient bitcoin;
     private String lastBlock, monitorBlock = null;
@@ -38,7 +37,7 @@ public class BitcoinAcceptor implements Runnable {
         this.lastBlock = lastBlock;
         this.monitorDepth = monitorDepth;
     }
-    
+
     public BitcoinAcceptor(BitcoindRpcClient bitcoin) {
         this(bitcoin, null, 6);
     }
@@ -103,7 +102,7 @@ public class BitcoinAcceptor implements Runnable {
                     try {
                         listener.transaction(transaction);
                     } catch (Exception ex) {
-                        logger.log(Level.SEVERE, null, ex);
+                        LOGGER.error(ex.getMessage());
                     }
                 }
             }
@@ -116,18 +115,18 @@ public class BitcoinAcceptor implements Runnable {
                 try {
                     listener.block(lastBlock);
                 } catch (Exception ex) {
-                    logger.log(Level.SEVERE, null, ex);
+                    LOGGER.error(ex.getMessage());
                 }
             }
         }
     }
 
     private boolean stop = false;
-    
+
     public void stopAccepting() {
         stop = true;
     }
-    
+
     private long checkInterval = 5000;
 
     /**
@@ -158,13 +157,13 @@ public class BitcoinAcceptor implements Runnable {
                     nextCheck = System.currentTimeMillis() + checkInterval;
                     checkPayments();
                 } catch (BitcoinRpcException ex) {
-                    Logger.getLogger(BitcoinAcceptor.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error(ex.getMessage());
                 }
             else
                 try {
                     Thread.sleep(Math.max(nextCheck - System.currentTimeMillis(), 100));
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(BitcoinAcceptor.class.getName()).log(Level.WARNING, null, ex);
+                    LOGGER.warn(ex.getMessage());
                 }
         }
     }

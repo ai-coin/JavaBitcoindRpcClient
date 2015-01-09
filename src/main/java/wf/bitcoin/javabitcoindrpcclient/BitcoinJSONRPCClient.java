@@ -39,11 +39,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+import org.apache.log4j.Logger;
 import wf.bitcoin.krotjson.Base64Coder;
 import wf.bitcoin.krotjson.JSON;
 import static wf.bitcoin.javabitcoindrpcclient.MapWrapper.*;
@@ -57,7 +56,7 @@ import static wf.bitcoin.javabitcoindrpcclient.MapWrapper.*;
  */
 public class BitcoinJSONRPCClient implements BitcoindRpcClient {
 
-  private static final Logger logger = Logger.getLogger(BitcoinJSONRPCClient.class.getCanonicalName());
+  private static final Logger LOGGER = Logger.getLogger(BitcoinJSONRPCClient.class);
 
   public final URL rpcURL;
 
@@ -98,7 +97,7 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
       }
 
       if (f != null) {
-        logger.fine("AICoin configuration file found");
+        LOGGER.info("AICoin configuration file found");
 
         Properties p = new Properties();
         try (FileInputStream i = new FileInputStream(f)) {
@@ -111,7 +110,7 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
         port = p.getProperty("rpcport", port);
       }
     } catch (Exception ex) {
-      logger.log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage());
     }
 
     try {
@@ -180,7 +179,7 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
   public Object loadResponse(InputStream in, Object expectedID, boolean close) throws IOException, BitcoinRpcException {
     try {
       String r = new String(loadStream(in, close), QUERY_CHARSET);
-      logger.log(Level.FINE, "AICoin JSON-RPC response:\n{0}", r);
+      LOGGER.info("AICoin JSON-RPC response:\n" + r);
       try {
         Map response = (Map) JSON.parse(r);
 
@@ -218,7 +217,7 @@ public class BitcoinJSONRPCClient implements BitcoindRpcClient {
 //            conn.connect();
       ((HttpURLConnection) conn).setRequestProperty("Authorization", "Basic " + authStr);
       byte[] r = prepareRequest(method, o);
-      logger.log(Level.FINE, "AICoin JSON-RPC request:\n{0}", new String(r, QUERY_CHARSET));
+      LOGGER.info("AICoin JSON-RPC request:\n" + new String(r, QUERY_CHARSET));
       conn.getOutputStream().write(r);
       conn.getOutputStream().close();
       int responseCode = conn.getResponseCode();
